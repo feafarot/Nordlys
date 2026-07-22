@@ -14,7 +14,7 @@ $interfaceName: #3BA6C4;
 $genericTypeArg: #98B89D;
 $number: #93EB9B; // slightly lighter green than strings
 $string: #7EE787; // green from Default Dark 2026
-$stringInterpolatedPart: #63C56B; // deeper green, sits inside green strings
+$stringInterpolatedPart: #4EC9B0; // mint-teal, hue-shifted so delimiters stand out inside green strings
 $properyName: #B6DDFD;
 $preprocessor: #E06C75;
 $constant: #66C3CC;
@@ -23,3 +23,22 @@ $metadata: #E5C07B;
 $jsonKey: #6395C5; // keyword blue, matches YAML keys (entity.name.tag)
 
 $searchResult: #42557B;
+
+// Terminal ANSI (shared by the VS Code theme and the Windows Terminal port).
+// Derived from theme roles; bright variants are palette colors or +20% white.
+$ansiBlack: #28292A;         // widget background
+$ansiRed: #E06C75;           // macros / preprocessor
+$ansiGreen: #63C56B;         // deep aurora green
+$ansiYellow: #E5C07B;        // decorators gold
+$ansiBlue: #6395C5;          // keywords
+$ansiMagenta: #D688D4;       // escapes
+$ansiCyan: #3BA6C4;          // interfaces
+$ansiWhite: #D4D4D4;         // foreground
+$ansiBrightBlack: #5C6370;   // comments
+$ansiBrightRed: #E68991;
+$ansiBrightGreen: #7EE787;   // strings
+$ansiBrightYellow: #EACD95;
+$ansiBrightBlue: #B6DDFD;    // properties
+$ansiBrightMagenta: #E0A6DF;
+$ansiBrightCyan: #1CB7E3;    // types
+$ansiBrightWhite: #ECECEC;
