@@ -12,6 +12,13 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}/vscode"
 			]
+		},
+		{
+			"name": "Preview page",
+			"type": "msedge",
+			"request": "launch",
+			"url": "http://localhost:5173/preview/",
+			"preLaunchTask": "Serve preview"
 		}
 	]
 }

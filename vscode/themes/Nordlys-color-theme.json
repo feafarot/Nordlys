@@ -599,7 +599,7 @@
       "name": "python placeholder reset to normal string",
       "scope": "constant.character.format.placeholder.other.python",
       "settings": {
-        "foreground": "#63c56b"
+        "foreground": "#4ec9b0"
       }
     },
     {
@@ -1402,7 +1402,7 @@
         "keyword.other.interpolation.end"
       ],
       "settings": {
-        "foreground": "#63c56b"
+        "foreground": "#4ec9b0"
       }
     },
     {
@@ -1483,7 +1483,7 @@
         "keyword.other.substitution.begin"
       ],
       "settings": {
-        "foreground": "#63c56b"
+        "foreground": "#4ec9b0"
       }
     },
     {
@@ -1492,7 +1492,7 @@
         "keyword.other.substitution.end"
       ],
       "settings": {
-        "foreground": "#63c56b"
+        "foreground": "#4ec9b0"
       }
     },
     {
@@ -2255,30 +2255,30 @@
     "tab.unfocusedHoverBackground": "#272727",
     "tab.unfocusedInactiveBackground": "#212223",
     "tab.unfocusedInactiveForeground": "#444444",
-    "terminal.ansiBlack": "#000000",
-    "terminal.ansiBlue": "#2472c8",
-    "terminal.ansiBrightBlack": "#666666",
-    "terminal.ansiBrightBlue": "#3b8eea",
-    "terminal.ansiBrightCyan": "#29b8db",
-    "terminal.ansiBrightGreen": "#23d18b",
-    "terminal.ansiBrightMagenta": "#d670d6",
-    "terminal.ansiBrightRed": "#f14c4c",
-    "terminal.ansiBrightWhite": "#e5e5e5",
-    "terminal.ansiBrightYellow": "#f5f543",
-    "terminal.ansiCyan": "#11a8cd",
-    "terminal.ansiGreen": "#0dbc79",
-    "terminal.ansiMagenta": "#bc3fbc",
-    "terminal.ansiRed": "#cd3131",
-    "terminal.ansiWhite": "#e5e5e5",
-    "terminal.ansiYellow": "#e5e510",
-    "terminal.background": "#212223",
+    "terminal.ansiBlack": "#28292a",
+    "terminal.ansiBlue": "#6395c5",
+    "terminal.ansiBrightBlack": "#5c6370",
+    "terminal.ansiBrightBlue": "#b6ddfd",
+    "terminal.ansiBrightCyan": "#1cb7e3",
+    "terminal.ansiBrightGreen": "#7ee787",
+    "terminal.ansiBrightMagenta": "#e0a6df",
+    "terminal.ansiBrightRed": "#e68991",
+    "terminal.ansiBrightWhite": "#ececec",
+    "terminal.ansiBrightYellow": "#eacd95",
+    "terminal.ansiCyan": "#3ba6c4",
+    "terminal.ansiGreen": "#63c56b",
+    "terminal.ansiMagenta": "#d688d4",
+    "terminal.ansiRed": "#e06c75",
+    "terminal.ansiWhite": "#d4d4d4",
+    "terminal.ansiYellow": "#e5c07b",
+    "terminal.background": "#1a1b1c",
     "terminal.border": "#323334FF",
     "terminal.foreground": "#cccccc",
     "terminal.inactiveSelectionBackground": "#3A3D41",
-    "terminal.selectionBackground": "#3994BC33",
+    "terminal.selectionBackground": "#404859",
     "terminal.tab.activeBorder": "#3994BC00",
-    "terminalCursor.background": "#212223",
-    "terminalCursor.foreground": "#bfbfbf",
+    "terminalCursor.background": "#1a1b1c",
+    "terminalCursor.foreground": "#d4d4d4",
     "textBlockQuote.background": "#2c2d2e",
     "textBlockQuote.border": "#323334FF",
     "textCodeBlock.background": "#2c2d2e",

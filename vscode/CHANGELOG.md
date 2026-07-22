@@ -2,6 +2,15 @@
 
 All notable changes to the "nordlys" extension will be documented in this file.
 
+## [0.1.0] 2026-07-22
+
+- String interpolation delimiters hue-shifted from deep green #63C56B to mint-teal #4EC9B0 for clearer separation from string green #7EE787 (Rider port updated to match)
+- Nordlys-native terminal ANSI palette replacing the stock VS Code primaries: red #E06C75, green #63C56B, yellow #E5C07B (gold), blue #6395C5, magenta #D688D4, cyan #3BA6C4; bright variants from palette colors (#7EE787, #B6DDFD, #1CB7E3, #5C6370) or +20% white
+- Terminal surfaces aligned with the Windows Terminal port: background #1A1B1C (was panel #212223), cursor #D4D4D4, selection #404859
+- Extension icon: painterly aurora over a polar ocean in the spirit of The Starry Night, brushed entirely from theme colors
+- README: color swatch images in the palette rundown, visible on GitHub and the Marketplace page
+- Repo: live terminal section in the preview page (reads the Windows Terminal scheme), VS Code task and launch config to serve and open the preview
+
 ## [0.0.1] 2026-07-22
 
 Initial release. Nordlys grew out of [Nightworlds](https://github.com/feafarot/nightworlds) and keeps its cool, low-contrast character while committing to an aurora-over-polar-night palette:

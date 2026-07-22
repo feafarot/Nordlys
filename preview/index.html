@@ -84,6 +84,12 @@
   }
   .line:hover .ln { color: var(--wb-linenum-active, #d4d4d4); }
 
+  .term {
+    font-family: var(--mono); font-size: 13px; line-height: 20px;
+    padding: 10px 14px 14px; white-space: pre; overflow-x: auto;
+  }
+  .term .cursor { display: inline-block; width: 8px; height: 16px; vertical-align: text-bottom; margin-left: 1px; }
+
   footer { margin-top: 26px; font-size: 11px; opacity: .5; line-height: 1.6; }
   footer code { font-family: var(--mono); }
   #error {
@@ -123,6 +129,10 @@
 <div class="strip roles" id="roles"></div>
 
 <div class="grid" id="grid"></div>
+
+<h2 class="sec">Terminal (windows-terminal/nordlys.json)</h2>
+<div class="strip" id="term-strip"></div>
+<div class="grid" id="term-grid"></div>
 
 <footer>
   Local-only preview. Colors are read live from <code>vscode/themes/Nordlys-color-theme.json</code> on every load
@@ -844,7 +854,7 @@ const ROLE_ORDER = ["text", "comment", "keyword", "method", "type", "variable", 
  * ---------------------------------------------------------------- */
 const NUM_SHADES = { current: null, "num-same": "#7ee787", "num-pastel": "#a9efaf" };
 const VARIANT_DESC = {
-  current:  "As applied: strings & constants #7ee787, numbers slightly lighter #93eb9b, interpolation darker green #57ab5a.",
+  current:  "As applied: strings & constants #7ee787, numbers slightly lighter #93eb9b, interpolation mint-teal #4ec9b0.",
   "num-same":   "Numbers use the exact string green (#7ee787), no literal-subtype distinction.",
   "num-pastel": "Numbers a full step lighter (#a9efaf), stronger separation from strings.",
 };
@@ -973,6 +983,95 @@ function render(theme) {
   });
 }
 
+/* ---------------------------------------------------------------- *
+ *  Terminal preview (windows-terminal/nordlys.json)                *
+ * ---------------------------------------------------------------- */
+const TERM_URL = "../windows-terminal/nordlys.json";
+const ANSI_ORDER = [
+  "black", "red", "green", "yellow", "blue", "purple", "cyan", "white",
+  "brightBlack", "brightRed", "brightGreen", "brightYellow",
+  "brightBlue", "brightPurple", "brightCyan", "brightWhite",
+];
+
+// Fake session: [text, schemeKey, isSelection?]
+const TERM_LINES = [
+  [["❯ ", "brightGreen"], ["git", "brightBlue"], [" status", "foreground"]],
+  [["On branch ", "foreground"], ["main", "brightCyan"]],
+  [["Changes not staged for commit:", "foreground"]],
+  [["        modified:   vscode/themes/Nordlys-color-theme.json", "red"]],
+  [["        modified:   preview/index.html", "red"]],
+  [[""]],
+  [["❯ ", "brightGreen"], ["npm", "brightBlue"], [" run build", "foreground"], ["   # rebuild swatches", "brightBlack"]],
+  [["debug", "purple"], [" resolving 17 palette roles", "foreground"], ["      14:02:09", "brightBlack"]],
+  [["info", "cyan"], ["  queued ", "foreground"], ["3", "brightYellow"], [" targets", "foreground"], ["             14:02:10", "brightBlack"]],
+  [["warn", "yellow"], ["  legacy scope fallback used", "foreground"]],
+  [["error", "brightRed"], [" snapshot mismatch: terminal.background", "foreground"]],
+  [["✓ built in 2.4s", "green"]],
+  [[""]],
+  [["❯ ", "brightGreen"], ["ls", "brightBlue"]],
+  [["palette/  ", "brightBlue"], ["preview/  ", "brightBlue"], ["rider/  ", "brightBlue"], ["README.md  ", "foreground"], ["publish.sh", "brightGreen"]],
+  [["❯ ", "brightGreen"], ["selected text looks like this", "foreground", true], [null, "cursor"]],
+];
+
+function renderTerminal(scheme) {
+  const strip = document.getElementById("term-strip");
+  strip.innerHTML = "";
+  for (const k of ["background", "foreground", "cursorColor", "selectionBackground"]) {
+    if (scheme[k]) strip.appendChild(chip(scheme[k], k, scheme[k]));
+  }
+  for (const k of ANSI_ORDER) {
+    if (scheme[k]) strip.appendChild(chip(scheme[k], k, scheme[k]));
+  }
+
+  const grid = document.getElementById("term-grid");
+  grid.innerHTML = "";
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML =
+    '<div class="tabbar"><div class="tab"><span class="dot"></span><span class="fn"></span>' +
+    '<span class="lang"></span></div></div><div class="term"></div>';
+  card.querySelector(".dot").style.background = scheme.green || "#0dbc79";
+  card.querySelector(".fn").textContent = scheme.name || "Nordlys";
+  card.querySelector(".lang").textContent = "pwsh";
+  const termEl = card.querySelector(".term");
+  termEl.style.background = scheme.background || "#1a1b1c";
+  termEl.style.color = scheme.foreground || "#cccccc";
+  for (const line of TERM_LINES) {
+    const row = document.createElement("div");
+    for (const [text, key, sel] of line) {
+      if (!text && key !== "cursor") continue;
+      const span = document.createElement("span");
+      if (key === "cursor") {
+        span.className = "cursor";
+        span.style.background = scheme.cursorColor || "#d4d4d4";
+        span.title = "cursorColor · " + (scheme.cursorColor || "#d4d4d4");
+      } else {
+        span.textContent = text;
+        if (key && key !== "foreground") span.style.color = scheme[key] || "";
+        if (sel) span.style.background = scheme.selectionBackground || "";
+        span.title = (sel ? "selectionBackground · " + scheme.selectionBackground + " · " : "") +
+          (key || "foreground") + " · " + (scheme[key] || scheme.foreground);
+      }
+      row.appendChild(span);
+    }
+    if (!row.childNodes.length) row.appendChild(document.createTextNode(" "));
+    termEl.appendChild(row);
+  }
+  grid.appendChild(card);
+}
+
+async function loadTerminal() {
+  try {
+    const res = await fetch(TERM_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status + " for " + TERM_URL);
+    renderTerminal(JSON.parse(stripJsonc(await res.text())));
+  } catch (e) {
+    document.getElementById("term-grid").innerHTML =
+      '<div style="opacity:.6">Failed to load terminal scheme: ' +
+      String(e.message).replace(/</g, "&lt;") + "</div>";
+  }
+}
+
 let rawTheme = null;
 const variantSel = document.getElementById("variant");
 variantSel.value = localStorage.getItem("nw-variant") || "current";
@@ -1043,7 +1142,9 @@ bgSel.addEventListener("change", () => {
   renderCurrent();
 });
 window.addEventListener("focus", load);
+window.addEventListener("focus", loadTerminal);
 load();
+loadTerminal();
 </script>
 </body>
 </html>
