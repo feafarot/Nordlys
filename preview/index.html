@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nordlys — theme preview</title>
+<style>
+  @font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; }
+  @font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-Italic.woff2") format("woff2"); font-weight: 400; font-style: italic; }
+  @font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; }
+  @font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-SemiBold.woff2") format("woff2"); font-weight: 600; font-style: normal; }
+  @font-face { font-family: "JetBrains Mono"; src: url("fonts/JetBrainsMono-Bold.woff2") format("woff2"); font-weight: 700; font-style: normal; }
+
+  :root {
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: var(--ui);
+    font-size: 13px;
+    background: var(--wb-sidebar, #21252b);
+    color: var(--wb-fg, #d3d3d3);
+    padding: 24px 28px 48px;
+  }
+  header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 6px; flex-wrap: wrap; }
+  header h1 { font-family: var(--mono); font-weight: 600; font-size: 18px; margin: 0; }
+  header .sub { opacity: .6; }
+  header button {
+    margin-left: auto; font-family: var(--ui); font-size: 12px; cursor: pointer;
+    background: var(--wb-button, #0e639c); color: #fff; border: 1px solid transparent;
+    border-radius: 3px; padding: 4px 12px;
+  }
+  header button:hover { filter: brightness(1.15); }
+  #status { font-size: 11px; opacity: .55; }
+  header select {
+    font-family: var(--ui); font-size: 12px; cursor: pointer;
+    background: var(--wb-editor, #282c34); color: var(--wb-fg, #d3d3d3);
+    border: 1px solid var(--wb-border, #343434); border-radius: 3px; padding: 4px 8px;
+  }
+  #variant-desc { font-size: 11px; opacity: .6; margin: 2px 0 0; width: 100%; }
+
+  .strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+  .chip {
+    display: flex; align-items: center; gap: 7px; padding: 4px 9px 4px 5px;
+    background: var(--wb-editor, #282c34); border: 1px solid var(--wb-border, #343434);
+    border-radius: 3px; font-family: var(--mono); font-size: 11px;
+  }
+  .chip .sw { width: 16px; height: 16px; border-radius: 2px; border: 1px solid #ffffff22; }
+  .chip .k { opacity: .55; }
+  .strip.roles .chip .sw { border-radius: 8px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(540px, 1fr)); gap: 18px; margin-top: 18px; }
+  .card {
+    border: 1px solid var(--wb-border, #343434); border-radius: 5px; overflow: hidden;
+    box-shadow: 0 2px 8px #0000005c;
+    background: var(--wb-editor, #282c34);
+  }
+  .tabbar {
+    display: flex; align-items: stretch; height: 35px;
+    background: var(--wb-tabs, #21252b); border-bottom: 1px solid var(--wb-border, #343434);
+    font-size: 13px;
+  }
+  .tab {
+    display: flex; align-items: center; gap: 7px; padding: 0 14px;
+    background: var(--wb-tab-active, #282c34); color: var(--wb-tab-active-fg, #ffffff);
+    border-right: 1px solid var(--wb-border, #343434);
+    box-shadow: inset 0 -2px 0 var(--wb-accent, #568af2);
+  }
+  .tab .dot { width: 8px; height: 8px; border-radius: 2px; }
+  .tab .lang { opacity: .45; font-size: 11px; margin-left: 4px; }
+  .code {
+    font-family: var(--mono); font-size: 13px; line-height: 20px;
+    padding: 8px 0 12px; overflow-x: auto; white-space: pre;
+    background: var(--wb-editor, #282c34); color: var(--tok-fallback, #d4d4d4);
+    font-feature-settings: "calt" 1, "liga" 1;
+  }
+  .line { display: flex; min-width: max-content; padding-right: 20px; }
+  .line:hover { background: var(--wb-linehl, #ffffff0a); }
+  .ln {
+    flex: 0 0 52px; text-align: right; padding-right: 18px; user-select: none;
+    color: var(--wb-linenum, #5c6370);
+  }
+  .line:hover .ln { color: var(--wb-linenum-active, #d4d4d4); }
+
+  footer { margin-top: 26px; font-size: 11px; opacity: .5; line-height: 1.6; }
+  footer code { font-family: var(--mono); }
+  #error {
+    display: none; margin: 20px 0; padding: 14px 16px; border-radius: 4px;
+    border: 1px solid #be1100; background: #3a1d1d; color: #f4a9a0; line-height: 1.7;
+  }
+  #error code { font-family: var(--mono); background: #00000040; padding: 1px 5px; border-radius: 3px; }
+  h2.sec { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .5; margin: 20px 0 2px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Nordlys</h1>
+  <span class="sub" id="theme-meta">theme preview</span>
+  <span id="status"></span>
+  <select id="variant" title="Number shade comparison — preview only until applied to the theme">
+    <option value="current">numbers: #93eb9b, lighter (applied)</option>
+    <option value="num-same">numbers: #7ee787, same as strings</option>
+    <option value="num-pastel">numbers: #a9efaf, pastel mint</option>
+  </select>
+  <select id="bg" title="Background lightness comparison — preview only, not applied to the theme">
+    <option value="0">bg: #1a1b1c (applied)</option>
+    <option value="-8">bg: -8 → #121314 (previous)</option>
+    <option value="6">bg: +6 → #202122</option>
+  </select>
+  <button id="reload" type="button">Reload theme</button>
+  <div id="variant-desc"></div>
+</header>
+
+<div id="error"></div>
+
+<h2 class="sec">Workbench surfaces</h2>
+<div class="strip" id="surfaces"></div>
+
+<h2 class="sec">Syntax roles (resolved from tokenColors)</h2>
+<div class="strip roles" id="roles"></div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  Local-only preview. Colors are read live from <code>vscode/themes/Nordlys-color-theme.json</code> on every load
+  and on window focus, so edit the theme, alt-tab back, and the page repaints. Serve the repo root over HTTP
+  (e.g. <code>npx -y http-server -p 5173 -c-1 .</code>) and open <code>/preview/</code>.
+  Hover any token to see its role, probed TextMate scope, and the resolved hex.
+</footer>
+
+<!-- ======================= code samples ======================= -->
+<script type="text/plain" data-lang="csharp" data-file="DurableSender.cs">using System;
+using Polly;
+
+namespace GP.MaxADR.Maestro.Sender;
+
+[ApiController]
+public sealed class DurableSender : IDataSender
+{
+    private const int MaxRetryCount = 3;
+
+    public async Task<bool> SendRequest(DataRequest req)
+    {
+        var retryCount = 0; // First attempt logged as '1'
+        var result = await Policy.Handle<Exception>()
+            .WaitAndRetryAsync(MaxRetryCount, n => TimeSpan.FromSeconds(n * 2))
+            .ExecuteAndCaptureAsync(async () =>
+            {
+                Log.Information($"Sending ({MessageId}), Attempt: #{retryCount}",
+                    req.MessageId, ++retryCount);
+                return (await sendRequest()).ResponseBody;
+            });
+        return result.Outcome == OutcomeType.Successful;
+    }
+}</script>
+
+<script type="text/plain" data-lang="fsharp" data-file="Pricing.fs">module Pricing
+
+open System
+
+type Rate = { Nights: int; Base: decimal }
+
+/// Apply a seasonal multiplier to a base rate
+let quote (rate: Rate) (season: string) : decimal =
+    let multiplier =
+        match season with
+        | "peak"     -> 1.4m
+        | "shoulder" -> 1.15m
+        | _          -> 1.0m
+    rate.Base * decimal rate.Nights * multiplier
+
+let total =
+    [ { Nights = 3; Base = 120m }; { Nights = 1; Base = 90m } ]
+    |> List.sumBy (fun r -> quote r "peak")
+
+printfn "Total: %M" total</script>
+
+<script type="text/plain" data-lang="typescript" data-file="payments.ts">import { Client } from "./client";
+
+export interface Charge {
+  id: string;
+  amount: number;
+  currency: "USD" | "EUR";
+}
+
+export async function capture(charge: Charge): Promise<boolean> {
+  const client = new Client(process.env.API_KEY!);
+  try {
+    const res = await client.post(`/charges/${charge.id}`, {
+      amount: charge.amount,
+    });
+    return res.status === 200; // captured
+  } catch (e) {
+    console.error(`capture failed: ${(e as Error).message}`);
+    return false;
+  }
+}</script>
+
+<script type="text/plain" data-lang="javascript" data-file="retry.js">const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+export async function withRetry(fn, attempts = 3) {
+  let lastError = null;
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      return await fn(i);
+    } catch (err) {
+      lastError = err;
+      console.warn(`attempt ${i} failed`, err.message);
+      await sleep(i * 250);
+    }
+  }
+  throw lastError;
+}</script>
+
+<script type="text/plain" data-lang="powershell" data-file="Publish.ps1">param(
+    [string]$Environment = "Dev",
+    [switch]$SkipTests
+)
+
+$ErrorActionPreference = "Stop"
+$projects = Get-ChildItem -Path .\src -Filter *.csproj -Recurse
+
+foreach ($proj in $projects) {
+    Write-Host "Building $($proj.Name)" -ForegroundColor Cyan
+    dotnet build $proj.FullName -c Release
+    if (-not $SkipTests) {
+        dotnet test $proj.FullName --no-build
+    }
+}
+Write-Host "Done -> $Environment" -ForegroundColor Green</script>
+
+<script type="text/plain" data-lang="shell" data-file="deploy.sh">#!/usr/bin/env bash
+set -euo pipefail
+
+APP="maxadr-api"
+ENV="${1:-staging}"
+
+echo "Deploying $APP to $ENV..."
+for svc in api web payments; do
+  docker build -t "$APP-$svc:latest" "./src/$svc"
+  if docker push "$APP-$svc:latest"; then
+    echo "  pushed $svc"
+  else
+    echo "  FAILED $svc" >&2
+    exit 1
+  fi
+done</script>
+
+<script type="text/plain" data-lang="jsx" data-file="GatewayList.jsx">import { useMemo } from "react";
+import { Badge } from "./ui";
+
+export function GatewayList({ gateways, onSelect }) {
+  const active = useMemo(() => gateways.filter((g) => g.alive), [gateways]);
+  return (
+    <section className="gateways" data-count={active.length}>
+      <h2>Active gateways</h2>
+      <ul>
+        {active.map((g) => (
+          <li key={g.id} onClick={() => onSelect(g.id)}>
+            <Badge tone={g.latency < 100 ? "ok" : "warn"} />
+            {g.host}:{g.port}
+          </li>
+        ))}
+      </ul>
+      {!active.length && <p className="empty">No live gateways</p>}
+    </section>
+  );
+}</script>
+
+<script type="text/plain" data-lang="html" data-file="index.html"><!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Payments</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <main class="container">
+      <!-- checkout entry point -->
+      <h1 data-role="title">Checkout</h1>
+      <PaymentForm currency="USD" onSubmit="capture()">
+        <input type="text" name="card" placeholder="Card number" />
+      </PaymentForm>
+    </main>
+  </body>
+</html></script>
+
+<script type="text/plain" data-lang="xml" data-file="Sender.csproj"><?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <!-- CI builds treat warnings as errors -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Polly" Version="8.4.1" />
+    <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+</Project></script>
+
+<script type="text/plain" data-lang="json" data-file="settings.json (bonus)">{
+  "chat.tools.terminal.autoApprove": {
+    "dotnet test": true,
+    "npm run build": true
+  },
+  "FSharp.enableMSBuildProjectGraph": true,
+  "FSharp.suggestGitignore": false,
+  "FSharp.showExplorerOnStartup": false,
+  "FSharp.fsac.attachDebugger": false,
+  "editor.fontSize": 14
+}</script>
+
+<script>
+"use strict";
+
+/* ---------------------------------------------------------------- *
+ *  Theme loading (JSONC-tolerant: comments + trailing commas)      *
+ * ---------------------------------------------------------------- */
+const THEME_URL = "../vscode/themes/Nordlys-color-theme.json";
+
+function stripJsonc(src) {
+  let out = "", i = 0, inStr = false;
+  while (i < src.length) {
+    const c = src[i];
+    if (inStr) {
+      out += c;
+      if (c === "\\") { out += src[i + 1] || ""; i += 2; continue; }
+      if (c === '"') inStr = false;
+      i++; continue;
+    }
+    if (c === '"') { inStr = true; out += c; i++; continue; }
+    if (c === "/" && src[i + 1] === "/") { while (i < src.length && src[i] !== "\n") i++; continue; }
+    if (c === "/" && src[i + 1] === "*") { const e = src.indexOf("*/", i + 2); i = e < 0 ? src.length : e + 2; continue; }
+    out += c; i++;
+  }
+  return out.replace(/,\s*([}\]])/g, "$1");
+}
+
+/* ---------------------------------------------------------------- *
+ *  TextMate scope matching over the theme's tokenColors            *
+ * ---------------------------------------------------------------- */
+function parseRules(tokenColors) {
+  const rules = [];
+  (tokenColors || []).forEach((tc, idx) => {
+    let sels = tc.scope;
+    if (!sels) return;
+    if (typeof sels === "string") sels = sels.split(",");
+    else sels = sels.flatMap((s) => String(s).split(","));
+    for (let sel of sels) {
+      sel = sel.trim();
+      if (!sel) continue;
+      const parts = sel.split(/\s+/).filter((p) => p !== ">");
+      rules.push({ parts, settings: tc.settings || {}, idx });
+    }
+  });
+  return rules;
+}
+
+const segMatch = (part, scope) => scope === part || scope.startsWith(part + ".");
+
+// Returns depth index of the deepest stack entry matched by the selector's
+// last part (ancestor parts must match shallower entries in order), or -1.
+function matchRule(rule, stack) {
+  const parts = rule.parts;
+  const last = parts[parts.length - 1];
+  for (let si = stack.length - 1; si >= 0; si--) {
+    if (!segMatch(last, stack[si])) continue;
+    let pi = parts.length - 2, sj = si - 1;
+    while (pi >= 0 && sj >= 0) {
+      if (segMatch(parts[pi], stack[sj])) pi--;
+      sj--;
+    }
+    if (pi < 0) return si;
+  }
+  return -1;
+}
+
+function makeResolver(rules) {
+  return function resolve(stack) {
+    let fg = null, fgScore = -1, style = null, styleScore = -1;
+    for (const r of rules) {
+      const depth = matchRule(r, stack);
+      if (depth < 0) continue;
+      const segs = r.parts[r.parts.length - 1].split(".").length;
+      const score = depth * 100000 + segs * 1000 + r.parts.length * 10 + r.idx / 10000;
+      if (r.settings.foreground && score >= fgScore) { fg = r.settings.foreground; fgScore = score; }
+      if (r.settings.fontStyle !== undefined && score >= styleScore) { style = r.settings.fontStyle; styleScore = score; }
+    }
+    return { foreground: fg, fontStyle: style };
+  };
+}
+
+/* ---------------------------------------------------------------- *
+ *  Role -> TextMate probe scopes (mirrors lib/themegen.js ROLES)   *
+ * ---------------------------------------------------------------- */
+const LANG_ROOT = {
+  csharp: "source.cs", fsharp: "source.fsharp", typescript: "source.ts",
+  javascript: "source.js", powershell: "source.powershell",
+  shell: "source.shell", json: "source.json",
+  jsx: "source.js.jsx", html: "text.html.basic", xml: "text.xml",
+};
+const LANG_MID = { json: ["meta.structure.dictionary.json"] };
+
+const BASE_PROBES = {
+  text:          ["punctuation.separator.delimiter"],
+  comment:       ["comment"],
+  keyword:       ["keyword.control", "keyword", "storage"],
+  method:        ["entity.name.function", "support.function", "keyword.other.special-method"],
+  type:          ["entity.name.type", "support.class", "storage.type"],
+  variable:      ["variable.other.readwrite", "variable"],
+  property:      ["variable.other.property", "support.type.property-name", "variable"],
+  string:        ["string.quoted.double", "string"],
+  number:        ["constant.numeric"],
+  constant:      ["constant.language", "constant"],
+  interpolation: ["punctuation.definition.template-expression.begin", "punctuation.section.embedded", "keyword.other.interpolation.begin"],
+  attribute:     ["entity.other.attribute-name"],
+  escape:        ["constant.character.escape"],
+  preprocessor:  ["meta.preprocessor", "keyword.control.directive", "keyword"],
+  tag:           ["entity.name.tag"],
+  tagCustom:     ["meta.tag.custom entity.name.tag", "entity.name.tag"],
+  attrName:      ["entity.other.attribute-name"],
+  embedded:      ["punctuation.section.embedded.begin", "punctuation.section.embedded"],
+  namespace:     ["entity.name.namespace"],
+};
+const LANG_PROBES = {
+  csharp: { attribute: ["entity.name.type.attribute", "entity.name.type"] },
+  json: {
+    property: ["support.type.property-name.json", "support.type.property-name"],
+    constant: ["constant.language.json", "constant.language", "constant"],
+  },
+  shell: { method: ["support.function.builtin", "support.function"] },
+  jsx: { attrName: ["entity.other.attribute-name.js", "entity.other.attribute-name"] },
+};
+
+// Languages with an installed semantic token provider resolve through
+// semanticTokenColors first, like real VS Code.
+const SEMANTIC_LANGS = new Set(["csharp", "fsharp", "typescript", "javascript", "jsx"]);
+const ROLE_SEMANTIC = {
+  keyword: ["keyword"], method: ["method", "function"], type: ["class", "type"],
+  variable: ["variable"], property: ["property"], string: ["string"],
+  number: ["number"], comment: ["comment"], namespace: ["namespace"],
+};
+
+function roleColor(resolve, lang, role, fallback, sem) {
+  if (sem && SEMANTIC_LANGS.has(lang)) {
+    for (const t of ROLE_SEMANTIC[role] || []) {
+      const v = sem[t];
+      if (!v) continue;
+      const fg = typeof v === "string" ? v : v.foreground;
+      if (fg) return { color: fg, fontStyle: typeof v === "object" ? v.fontStyle || null : null, scope: "semantic: " + t };
+    }
+  }
+  const probes = (LANG_PROBES[lang] && LANG_PROBES[lang][role]) || BASE_PROBES[role] || [];
+  const root = LANG_ROOT[lang] || "source";
+  const mid = LANG_MID[lang] || [];
+  for (const probe of probes) {
+    const r = resolve([root, ...mid, ...probe.split(" ")]);
+    if (r.foreground) return { color: r.foreground, fontStyle: r.fontStyle, scope: probe };
+  }
+  return { color: fallback, fontStyle: null, scope: "(editor.foreground)" };
+}
+
+/* ---------------------------------------------------------------- *
+ *  Pragmatic tokenizer (ported from the design handoff)            *
+ * ---------------------------------------------------------------- */
+const KW = {
+  csharp: "abstract as async await base bool break byte case catch char checked class const continue decimal default delegate do double else enum event explicit extern false finally fixed float for foreach goto if implicit in int interface internal is lock long namespace new null object operator out override params private protected public readonly ref return sbyte sealed short sizeof stackalloc static string struct switch this throw true try typeof uint ulong unchecked unsafe ushort using var virtual void volatile while yield record init with when where nameof and or not get set value add remove global partial",
+  fsharp: "abstract and as assert base begin class default delegate do done downcast downto elif else end exception extern false finally for fun function global if in inherit inline interface internal lazy let match member module mutable namespace new not null of open or override private public rec return static struct then to true try type upcast use val void when while with yield",
+  typescript: "abstract any as asserts async await boolean break case catch class const continue debugger declare default delete do else enum export extends false finally for from function get if implements import in infer instanceof interface is keyof let module namespace never new null number object of package private protected public readonly return satisfies set static string super switch symbol this throw true try type typeof undefined unique unknown var void while yield",
+  javascript: "async await break case catch class const continue debugger default delete do else export extends false finally for from function get if import in instanceof let new null of return set static super switch this throw true try typeof undefined var void while yield",
+  powershell: "if elseif else switch foreach for while do until break continue return function filter param begin process end try catch finally throw trap class enum using namespace exit in default",
+  shell: "if then elif else fi for while until do done case esac function in select time return break continue local export readonly declare typeset set unset trap eval exec source",
+  json: "",
+};
+const TYPES = {
+  csharp: "Task List Dictionary IEnumerable IReadOnlyList ICollection Exception Console String Int32 Guid DateTime TimeSpan Nullable Func Action Span Memory HttpClient CancellationToken ValueTask Policy",
+  fsharp: "int string float bool decimal list array option seq Map Set Result Async Task unit char byte int64 float32 obj",
+  typescript: "Array Promise Record Map Set Partial Readonly Pick Omit ReturnType Awaited String Number Boolean Object Date RegExp Error Function ReadonlyArray",
+  javascript: "Array Promise Map Set Object Date RegExp Error JSON Math Number String Boolean Symbol",
+  powershell: "string switch int bool decimal datetime double long char object",
+  shell: "", json: "",
+};
+const CONST = {
+  csharp: "true false null", fsharp: "true false null None Some Ok Error",
+  typescript: "true false null undefined NaN Infinity", javascript: "true false null undefined NaN Infinity",
+  powershell: "", shell: "", json: "true false null",
+};
+const SHELL_BUILTINS = "echo printf cd exit read pwd test";
+
+const wordSet = (s) => { const m = new Set(); (s || "").split(/\s+/).forEach((w) => w && m.add(w)); return m; };
+
+const cfg = {
+  csharp:     { line: "//", block: ["/*", "*/"], strings: ['"', "'"], verbatim: true, interp: true, attr: /^\[[A-Za-z]/, pre: "#" },
+  fsharp:     { line: "//", block: ["(*", "*)"], strings: ['"', "'"], attr: /^\[<[A-Za-z]/, pre: "#" },
+  typescript: { line: "//", block: ["/*", "*/"], strings: ['"', "'", "`"], interp: true, decor: "@" },
+  javascript: { line: "//", block: ["/*", "*/"], strings: ['"', "'", "`"], interp: true },
+  powershell: { line: "#", block: ["<#", "#>"], strings: ['"', "'"], sigil: "$", plainIdents: true, hyphenIdents: true },
+  shell:      { line: "#", block: null, strings: ['"', "'"], sigil: "$", plainIdents: true },
+  json:       { line: "//", block: ["/*", "*/"], strings: ['"'] },
+};
+
+function classifyWord(w, lang, prevCh, nextCh) {
+  if (wordSet(CONST[lang]).has(w)) return "constant";
+  if (wordSet(KW[lang]).has(w)) return "keyword";
+  if (nextCh === "(" || (prevCh === "." && nextCh === "<")) return "method";
+  if (prevCh === ".") return "property";
+  if (wordSet(TYPES[lang]).has(w)) return "type";
+  if (lang === "shell" && wordSet(SHELL_BUILTINS).has(w)) return "method";
+  if (!cfg[lang].plainIdents && /^[A-Z][A-Za-z0-9_]*$/.test(w)) return "type";
+  return null;
+}
+
+// Scan a double-quoted string body for $var / ${..} / $(..) in sigil langs.
+function pushSigilString(out, body, push) {
+  let i = 0, buf = "";
+  while (i < body.length) {
+    const c = body[i];
+    if (c === "$" && body[i + 1] === "(") {
+      push(buf, "string"); buf = "";
+      let d = 0, j = i + 1;
+      for (; j < body.length; j++) { if (body[j] === "(") d++; else if (body[j] === ")") { d--; if (!d) { j++; break; } } }
+      push(body.slice(i, j), "interpolation"); i = j; continue;
+    }
+    if (c === "$" && body[i + 1] === "{") {
+      push(buf, "string"); buf = "";
+      let j = body.indexOf("}", i); j = j < 0 ? body.length : j + 1;
+      push(body.slice(i, j), "variable"); i = j; continue;
+    }
+    if (c === "$" && /[A-Za-z_]/.test(body[i + 1] || "")) {
+      push(buf, "string"); buf = "";
+      let j = i + 1; while (j < body.length && /[A-Za-z0-9_]/.test(body[j])) j++;
+      push(body.slice(i, j), "variable"); i = j; continue;
+    }
+    buf += c; i++;
+  }
+  push(buf, "string");
+}
+
+function tokenizeCodeFlat(code, lang) {
+  const c = cfg[lang] || cfg.javascript;
+  const out = [];
+  let i = 0;
+  const n = code.length;
+  const push = (text, role) => { if (text) out.push({ text, role: role || "text" }); };
+
+  while (i < n) {
+    const ch = code[i];
+    if (c.block && code.startsWith(c.block[0], i)) {
+      const end = code.indexOf(c.block[1], i + c.block[0].length);
+      const j = end < 0 ? n : end + c.block[1].length;
+      push(code.slice(i, j), "comment"); i = j; continue;
+    }
+    if (c.line && code.startsWith(c.line, i)) {
+      let j = code.indexOf("\n", i); if (j < 0) j = n;
+      push(code.slice(i, j), "comment"); i = j; continue;
+    }
+    if (c.attr && ch === "[" && c.attr.test(code.slice(i, i + 6))) {
+      let depth = 0, j = i;
+      for (; j < n; j++) { if (code[j] === "[") depth++; else if (code[j] === "]") { depth--; if (!depth) { j++; break; } } }
+      push(code.slice(i, j), "attribute"); i = j; continue;
+    }
+    if (c.pre && ch === "#" && /(^|\n)\s*$/.test(code.slice(0, i))) {
+      let j = code.indexOf("\n", i); if (j < 0) j = n;
+      push(code.slice(i, j), "preprocessor"); i = j; continue;
+    }
+    // strings
+    const isVerbatim = c.verbatim && ch === "@" && code[i + 1] === '"';
+    const isInterp = c.interp && ch === "$" && (code[i + 1] === '"' || code[i + 1] === "`");
+    if (isVerbatim || isInterp || c.strings.includes(ch)) {
+      let prefix = "";
+      if (isVerbatim || isInterp) { prefix = code[i]; i++; }
+      const q = code[i]; i++;
+      let buf = prefix + q;
+      let body = "";
+      while (i < n) {
+        const d = code[i];
+        if (d === "\\" && q !== "`" && lang !== "csharp" && lang !== "powershell") {
+          push(buf + body, "string"); buf = ""; body = "";
+          push(code.slice(i, i + 2), "escape"); i += 2; continue;
+        }
+        if (q === "`" && d === "$" && code[i + 1] === "{") {
+          push(buf + body, "string"); buf = ""; body = "";
+          let j = code.indexOf("}", i); if (j < 0) j = n; else j++;
+          push(code.slice(i, j), "interpolation"); i = j; continue;
+        }
+        if (isInterp && q === '"' && d === "{" && code[i + 1] !== "{") {
+          push(buf + body, "string"); buf = ""; body = "";
+          let j = code.indexOf("}", i); if (j < 0) j = n; else j++;
+          push(code.slice(i, j), "interpolation"); i = j; continue;
+        }
+        if (d === q) {
+          if (c.sigil && q === '"') {
+            push(buf, "string");
+            pushSigilString(out, body, push);
+            push(q, "string");
+          } else {
+            push(buf + body + q, "string");
+          }
+          buf = ""; body = ""; i++;
+          break;
+        }
+        body += d; i++;
+      }
+      if (buf || body) { // unterminated
+        if (c.sigil) { push(buf, "string"); pushSigilString(out, body, push); }
+        else push(buf + body, "string");
+      }
+      // json: a string directly followed by ':' is a property key
+      if (lang === "json") {
+        let k = i; while (k < n && code[k] === " ") k++;
+        if (code[k] === ":") {
+          for (let b = out.length - 1; b >= 0; b--) {
+            if (out[b].role === "string") { out[b].role = "property"; break; }
+            if (out[b].role !== "escape") break;
+          }
+        }
+      }
+      continue;
+    }
+    // numbers
+    if (/[0-9]/.test(ch) || (ch === "." && /[0-9]/.test(code[i + 1] || ""))) {
+      let j = i; while (j < n && /[0-9a-fA-FxXoObB._]/.test(code[j])) j++;
+      while (j < n && /[mMfFdDuUlLnN]/.test(code[j])) j++;
+      push(code.slice(i, j), "number"); i = j; continue;
+    }
+    // sigil variables
+    if (c.sigil && ch === c.sigil) {
+      let j = i + 1;
+      if (code[j] === "{") { j = code.indexOf("}", j); j = j < 0 ? n : j + 1; }
+      else if (/[0-9]/.test(code[j] || "")) j++;
+      else while (j < n && /[A-Za-z0-9_]/.test(code[j])) j++;
+      push(code.slice(i, j), "variable"); i = j; continue;
+    }
+    // powershell/shell "-flag"
+    if (c.plainIdents && ch === "-" && /[A-Za-z]/.test(code[i + 1] || "") && /(^|[\s(])$/.test(code.slice(Math.max(0, i - 1), i) || " ")) {
+      let j = i + 1; while (j < n && /[A-Za-z0-9-]/.test(code[j])) j++;
+      push(code.slice(i, j), "text"); i = j; continue;
+    }
+    // identifiers
+    if (/[A-Za-z_]/.test(ch)) {
+      let j = i;
+      const idRe = c.hyphenIdents ? /[A-Za-z0-9_-]/ : /[A-Za-z0-9_]/;
+      while (j < n && idRe.test(code[j])) j++;
+      const w = code.slice(i, j);
+      let k = j; while (k < n && code[k] === " ") k++;
+      const prevCh = code[i - 1] || "";
+      // identifiers on using/namespace/open/module lines are namespace segments
+      const lineStart = code.lastIndexOf("\n", i) + 1;
+      const nsLine = /^\s*(using|namespace|open|module)\s/.test(code.slice(lineStart, i)) &&
+        (lang === "csharp" || lang === "fsharp");
+      if (nsLine && !wordSet(KW[lang]).has(w)) { push(w, "namespace"); i = j; continue; }
+      let role = classifyWord(w, lang, prevCh, code[k] === "(" ? "(" : code[j] || "");
+      if (!role) {
+        if (c.plainIdents) {
+          // bash: NAME= assignment reads as a variable
+          role = (lang === "shell" && code[j] === "=") ? "variable" : "text";
+        } else {
+          role = "variable";
+        }
+      }
+      if (c.plainIdents && (role === "variable" || role === "property") && prevCh !== "." && code[j] !== "=") role = "text";
+      push(w, role); i = j; continue;
+    }
+    // decorators
+    if (c.decor && ch === "@" && /[A-Za-z]/.test(code[i + 1] || "")) {
+      let j = i + 1; while (j < n && /[A-Za-z0-9_.]/.test(code[j])) j++;
+      push(code.slice(i, j), "attribute"); i = j; continue;
+    }
+    push(ch, "text"); i++;
+  }
+  return out;
+}
+
+/* ----- markup (HTML / XML) ----- */
+function tokenizeMarkupFlat(code, isXml) {
+  const out = [];
+  let i = 0;
+  const n = code.length;
+  const push = (t, r) => { if (t) out.push({ text: t, role: r || "text" }); };
+  while (i < n) {
+    if (code.startsWith("<!--", i)) {
+      let j = code.indexOf("-->", i); j = j < 0 ? n : j + 3;
+      push(code.slice(i, j), "comment"); i = j; continue;
+    }
+    if (code.startsWith("<!", i)) { // doctype
+      let j = code.indexOf(">", i); j = j < 0 ? n : j + 1;
+      push(code.slice(i, j), "tag"); i = j; continue;
+    }
+    if (code[i] === "<") {
+      let j = i + 1;
+      if (code[j] === "/" || code[j] === "?") j++;
+      const s = j;
+      while (j < n && /[A-Za-z0-9_.:?-]/.test(code[j])) j++;
+      const tag = code.slice(s, j);
+      push(code.slice(i, s), "text");
+      push(tag, !isXml && /[A-Z.]/.test(tag) ? "tagCustom" : "tag");
+      while (j < n && code[j] !== ">") {
+        if (/\s/.test(code[j])) { push(code[j], "text"); j++; continue; }
+        if (code[j] === "/" || code[j] === "?") { push(code[j], "text"); j++; continue; }
+        const as = j;
+        while (j < n && /[A-Za-z0-9_.:-]/.test(code[j])) j++;
+        if (j > as) push(code.slice(as, j), "attrName");
+        if (code[j] === "=") {
+          push("=", "text"); j++;
+          if (code[j] === '"' || code[j] === "'") {
+            const q = code[j];
+            let e = code.indexOf(q, j + 1); e = e < 0 ? n : e + 1;
+            push(code.slice(j, e), "string"); j = e;
+          }
+        }
+      }
+      if (code[j] === ">") { push(">", "text"); j++; }
+      i = j; continue;
+    }
+    let j = code.indexOf("<", i); if (j < 0) j = n;
+    push(code.slice(i, j), "text"); i = j;
+  }
+  return out;
+}
+
+/* ----- JSX: JS tokenizer + element scanner ----- */
+function tokenizeJsxFlat(code) {
+  const out = [];
+  let i = 0;
+  const n = code.length;
+  let jsBuf = "";
+  const flushJs = () => { if (jsBuf) { out.push(...tokenizeCodeFlat(jsBuf, "javascript")); jsBuf = ""; } };
+  const push = (t, r) => { if (t) out.push({ text: t, role: r || "text" }); };
+
+  // consume one balanced {...} JSX expression container
+  const scanExpr = (k) => {
+    push("{", "embedded");
+    let depth = 1, s = k + 1, j = k + 1;
+    while (j < n && depth) { if (code[j] === "{") depth++; else if (code[j] === "}") depth--; j++; }
+    const inner = code.slice(s, depth ? n : j - 1);
+    out.push(...tokenizeJsxFlat(inner));
+    if (!depth) push("}", "embedded");
+    return j;
+  };
+
+  // parse one element starting at "<"; returns index after it
+  const scanElement = (k) => {
+    let j = k + 1;
+    const closing = code[j] === "/";
+    if (closing) j++;
+    const s = j;
+    while (j < n && /[A-Za-z0-9_.-]/.test(code[j])) j++;
+    const tag = code.slice(s, j);
+    push(code.slice(k, s), "text");
+    push(tag, /^[A-Z]/.test(tag) ? "tagCustom" : "tag");
+    // attributes
+    while (j < n && code[j] !== ">") {
+      if (/\s/.test(code[j])) { push(code[j], "text"); j++; continue; }
+      if (code[j] === "/") { push("/", "text"); j++; continue; }
+      if (code[j] === "{") { j = scanExpr(j); continue; } // spread {...props}
+      const as = j;
+      while (j < n && /[A-Za-z0-9_-]/.test(code[j])) j++;
+      if (j > as) push(code.slice(as, j), "attrName");
+      if (code[j] === "=") {
+        push("=", "text"); j++;
+        if (code[j] === '"' || code[j] === "'") {
+          const q = code[j];
+          let e = code.indexOf(q, j + 1); e = e < 0 ? n : e + 1;
+          push(code.slice(j, e), "string"); j = e;
+        } else if (code[j] === "{") {
+          j = scanExpr(j);
+        }
+      }
+    }
+    const selfClosing = code[j - 1] === "/";
+    if (code[j] === ">") { push(">", "text"); j++; }
+    if (closing || selfClosing) return j;
+    // children
+    while (j < n) {
+      if (code[j] === "{") { j = scanExpr(j); continue; }
+      if (code.startsWith("</", j)) return scanElement(j);
+      if (code[j] === "<" && /[A-Za-z]/.test(code[j + 1] || "")) { j = scanElement(j); continue; }
+      let e = j;
+      while (e < n && code[e] !== "<" && code[e] !== "{") e++;
+      push(code.slice(j, e), "text"); j = e;
+    }
+    return j;
+  };
+
+  while (i < n) {
+    const ch = code[i];
+    // keep strings/comments intact inside the JS buffer so a "<" inside them
+    // can't be mistaken for a tag
+    if (ch === '"' || ch === "'" || ch === "`") {
+      const q = ch; jsBuf += ch; i++;
+      while (i < n) { const d = code[i]; jsBuf += d; i++; if (d === "\\") { jsBuf += code[i] || ""; i++; continue; } if (d === q) break; }
+      continue;
+    }
+    if (ch === "/" && (code[i + 1] === "/" || code[i + 1] === "*")) {
+      const end = code[i + 1] === "/" ? code.indexOf("\n", i) : code.indexOf("*/", i) + 2;
+      const j = end <= 1 ? n : end;
+      jsBuf += code.slice(i, j); i = j; continue;
+    }
+    if (ch === "<" && /[A-Za-z]/.test(code[i + 1] || "")) {
+      const prev = (jsBuf.match(/(\S)\s*$/) || [, ""])[1];
+      const tagContext = prev === "" || "(,{=>?:&|;".includes(prev) || /\breturn\s*$/.test(jsBuf);
+      if (tagContext) { flushJs(); i = scanElement(i); continue; }
+    }
+    jsBuf += ch; i++;
+  }
+  flushJs();
+  return out;
+}
+
+function tokenize(code, lang) {
+  const flat =
+    lang === "html" || lang === "xml" ? tokenizeMarkupFlat(code, lang === "xml") :
+    lang === "jsx" ? tokenizeJsxFlat(code) :
+    tokenizeCodeFlat(code, lang);
+  const lines = [[]];
+  for (const tk of flat) {
+    const parts = tk.text.split("\n");
+    parts.forEach((p, idx) => {
+      if (idx > 0) lines.push([]);
+      if (p) lines[lines.length - 1].push({ text: p, role: tk.role });
+    });
+  }
+  return lines;
+}
+
+/* ---------------------------------------------------------------- *
+ *  Rendering                                                       *
+ * ---------------------------------------------------------------- */
+const SURFACE_KEYS = [
+  "editor.background", "sideBar.background", "activityBar.background", "panel.background",
+  "statusBar.background", "tab.activeBackground", "tab.inactiveBackground",
+  "editor.lineHighlightBackground", "editor.selectionBackground",
+  "focusBorder", "editor.foreground", "foreground",
+];
+const ROLE_ORDER = ["text", "comment", "keyword", "method", "type", "variable", "property",
+  "string", "number", "constant", "interpolation", "attribute", "escape", "tag", "attrName"];
+
+/* ---------------------------------------------------------------- *
+ *  #7ee787 integration variants (preview-only until applied)       *
+ * ---------------------------------------------------------------- */
+const NUM_SHADES = { current: null, "num-same": "#7ee787", "num-pastel": "#a9efaf" };
+const VARIANT_DESC = {
+  current:  "As applied: strings & constants #7ee787, numbers slightly lighter #93eb9b, interpolation darker green #57ab5a.",
+  "num-same":   "Numbers use the exact string green (#7ee787), no literal-subtype distinction.",
+  "num-pastel": "Numbers a full step lighter (#a9efaf), stronger separation from strings.",
+};
+
+function applyVariant(theme, id) {
+  const shade = NUM_SHADES[id];
+  if (!shade) return theme;
+  const t = structuredClone(theme);
+  for (const tc of t.tokenColors) {
+    if (!tc.settings || !tc.settings.foreground) continue;
+    const s = Array.isArray(tc.scope) ? tc.scope.join(",") : String(tc.scope || "");
+    if (tc.settings.foreground.toLowerCase() === "#93eb9b" && /numeric|quantifier/.test(s)) {
+      tc.settings.foreground = shade;
+    }
+  }
+  return t;
+}
+
+function setVars(colors) {
+  const r = document.documentElement.style;
+  const g = (k, d) => colors[k] || d;
+  r.setProperty("--wb-sidebar", g("sideBar.background", "#21252b"));
+  r.setProperty("--wb-editor", g("editor.background", "#282c34"));
+  r.setProperty("--wb-tabs", g("editorGroupHeader.tabsBackground", g("sideBar.background", "#21252b")));
+  r.setProperty("--wb-tab-active", g("tab.activeBackground", g("editor.background", "#282c34")));
+  r.setProperty("--wb-tab-active-fg", g("tab.activeForeground", "#ffffff"));
+  r.setProperty("--wb-border", g("editorGroupHeader.border", g("activityBar.border", "#343434")));
+  r.setProperty("--wb-accent", g("tab.activeBorder", g("focusBorder", "#568af2")));
+  r.setProperty("--wb-fg", g("foreground", "#d3d3d3"));
+  r.setProperty("--wb-linenum", g("editorLineNumber.foreground", "#5c6370"));
+  r.setProperty("--wb-linenum-active", g("editorLineNumber.activeForeground", "#d4d4d4"));
+  r.setProperty("--wb-linehl", g("editor.lineHighlightBackground", "#ffffff0a"));
+  r.setProperty("--wb-button", g("button.background", "#0e639c"));
+  r.setProperty("--tok-fallback", g("editor.foreground", "#d4d4d4"));
+  r.setProperty("--wb-whitespace", g("editorWhitespace.foreground", "#8c8c8c4d"));
+}
+
+function chip(hexOrName, label, sw) {
+  const el = document.createElement("div");
+  el.className = "chip";
+  el.innerHTML = '<span class="sw"></span><span class="k"></span><span class="v"></span>';
+  el.querySelector(".sw").style.background = sw;
+  el.querySelector(".k").textContent = label;
+  el.querySelector(".v").textContent = hexOrName;
+  return el;
+}
+
+function render(theme) {
+  const colors = theme.colors || {};
+  setVars(colors);
+  const resolve = makeResolver(parseRules(theme.tokenColors));
+  const fallback = colors["editor.foreground"] || "#d4d4d4";
+  const sem = theme.semanticTokenColors || {};
+
+  document.getElementById("theme-meta").textContent =
+    (theme.name || "theme") + " · " + (theme.type || "dark") + " · editor " + (colors["editor.background"] || "?");
+
+  const surf = document.getElementById("surfaces");
+  surf.innerHTML = "";
+  for (const k of SURFACE_KEYS) {
+    if (colors[k]) surf.appendChild(chip(colors[k], k, colors[k]));
+  }
+
+  const rolesEl = document.getElementById("roles");
+  rolesEl.innerHTML = "";
+  for (const role of ROLE_ORDER) {
+    const rc = roleColor(resolve, "csharp", role, fallback, sem);
+    rolesEl.appendChild(chip(rc.color, role, rc.color));
+  }
+
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  document.querySelectorAll('script[type="text/plain"]').forEach((s) => {
+    const lang = s.dataset.lang, file = s.dataset.file;
+    const card = document.createElement("div");
+    card.className = "card";
+    const dotColor = roleColor(resolve, lang, lang === "json" ? "property" : "type", fallback, sem).color;
+    card.innerHTML =
+      '<div class="tabbar"><div class="tab"><span class="dot"></span><span class="fn"></span>' +
+      '<span class="lang"></span></div></div><div class="code"></div>';
+    card.querySelector(".dot").style.background = dotColor;
+    card.querySelector(".fn").textContent = file;
+    card.querySelector(".lang").textContent = lang;
+    const codeEl = card.querySelector(".code");
+    const lines = tokenize(s.textContent.replace(/^\n/, ""), lang);
+    lines.forEach((ln, idx) => {
+      const row = document.createElement("div");
+      row.className = "line";
+      const num = document.createElement("span");
+      num.className = "ln";
+      num.textContent = idx + 1;
+      row.appendChild(num);
+      const content = document.createElement("span");
+      let atStart = true; // render leading whitespace as boundary dots
+      for (const tk of ln) {
+        let text = tk.text;
+        if (atStart) {
+          const m = text.match(/^ +/);
+          if (m) {
+            const ws = document.createElement("span");
+            ws.textContent = "·".repeat(m[0].length);
+            ws.style.color = "var(--wb-whitespace)";
+            ws.title = "editorWhitespace.foreground";
+            content.appendChild(ws);
+            text = text.slice(m[0].length);
+          }
+          if (text) atStart = false;
+          if (!text) continue;
+        }
+        const span = document.createElement("span");
+        span.textContent = text;
+        const rc = roleColor(resolve, lang, tk.role, fallback, sem);
+        span.style.color = rc.color;
+        if (rc.fontStyle) {
+          if (rc.fontStyle.includes("italic")) span.style.fontStyle = "italic";
+          if (rc.fontStyle.includes("bold")) span.style.fontWeight = "600";
+          if (rc.fontStyle.includes("underline")) span.style.textDecoration = "underline";
+        }
+        span.title = tk.role + " · " + rc.scope + " · " + rc.color;
+        content.appendChild(span);
+      }
+      row.appendChild(content);
+      codeEl.appendChild(row);
+    });
+    grid.appendChild(card);
+  });
+}
+
+let rawTheme = null;
+const variantSel = document.getElementById("variant");
+variantSel.value = localStorage.getItem("nw-variant") || "current";
+if (!(variantSel.value in VARIANT_DESC)) variantSel.value = "current";
+const bgSel = document.getElementById("bg");
+bgSel.value = localStorage.getItem("nw-bg") || "0";
+if (![...bgSel.options].some((o) => o.value === bgSel.value)) bgSel.value = "0";
+
+// Preview-only: lift the background surfaces to reduce text/background contrast.
+const BG_KEYS = [
+  "editor.background", "sideBar.background", "activityBar.background",
+  "panel.background", "statusBar.background", "editorGroupHeader.tabsBackground",
+  "tab.activeBackground", "tab.inactiveBackground", "editor.lineHighlightBackground",
+];
+function lighten(hex, delta) {
+  const m = /^#([0-9a-f]{6})([0-9a-f]{2})?$/i.exec(hex);
+  if (!m) return hex;
+  const v = parseInt(m[1], 16);
+  const ch = (x) => Math.max(0, Math.min(255, x + delta)).toString(16).padStart(2, "0");
+  return "#" + ch(v >> 16) + ch((v >> 8) & 255) + ch(v & 255) + (m[2] || "");
+}
+function applyBg(theme, delta) {
+  if (!delta) return theme;
+  const t = structuredClone(theme);
+  for (const k of BG_KEYS) if (t.colors[k]) t.colors[k] = lighten(t.colors[k], delta);
+  return t;
+}
+
+function renderCurrent() {
+  if (!rawTheme) return;
+  const id = variantSel.value;
+  const delta = parseInt(bgSel.value, 10) || 0;
+  const bgDesc = delta ? " Background lifted +" + delta + " (preview-only) — editor " +
+    lighten(rawTheme.colors["editor.background"] || "#121314", delta) + "." : "";
+  document.getElementById("variant-desc").textContent = (VARIANT_DESC[id] || "") + bgDesc;
+  render(applyBg(applyVariant(rawTheme, id), delta));
+}
+
+async function load() {
+  const status = document.getElementById("status");
+  const errBox = document.getElementById("error");
+  try {
+    if (location.protocol === "file:") throw new Error("file-protocol");
+    const res = await fetch(THEME_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status + " for " + THEME_URL);
+    rawTheme = JSON.parse(stripJsonc(await res.text()));
+    errBox.style.display = "none";
+    renderCurrent();
+    status.textContent = "theme loaded " + new Date().toLocaleTimeString();
+  } catch (e) {
+    errBox.style.display = "block";
+    errBox.innerHTML = e.message === "file-protocol"
+      ? "This page reads <code>vscode/themes/Nordlys-color-theme.json</code> via <code>fetch()</code>, which browsers " +
+        "block on <code>file://</code>. Serve the repo root over HTTP instead:<br>" +
+        "<code>npx -y http-server -p 5173 -c-1 .</code> &nbsp;then open&nbsp; <code>http://localhost:5173/preview/</code>"
+      : "Failed to load theme: <code>" + String(e.message).replace(/</g, "&lt;") + "</code>";
+    status.textContent = "";
+  }
+}
+
+document.getElementById("reload").addEventListener("click", load);
+variantSel.addEventListener("change", () => {
+  localStorage.setItem("nw-variant", variantSel.value);
+  renderCurrent();
+});
+bgSel.addEventListener("change", () => {
+  localStorage.setItem("nw-bg", bgSel.value);
+  renderCurrent();
+});
+window.addEventListener("focus", load);
+load();
+</script>
+</body>
+</html>

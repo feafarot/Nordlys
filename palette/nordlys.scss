@@ -1,0 +1,25 @@
+
+$foreground: #D3D3D3;
+$background: #1A1B1C; // editor, Default Dark 2026 lifted +8 for lower contrast
+$backgroundChrome: #212223; // sidebar / bars / panel
+$backgroundWidget: #28292A; // menus, hovers, suggest
+$lineHighlight: #2C2D2E;
+$border: #323334;
+$comment: #5C6370;
+
+$keyword: #6395C5;
+$method: #DDE3EA; // near-foreground, calls quiet; declarations bold
+$className: #1CB7E3;
+$interfaceName: #3BA6C4;
+$genericTypeArg: #98B89D;
+$number: #93EB9B; // slightly lighter green than strings
+$string: #7EE787; // green from Default Dark 2026
+$stringInterpolatedPart: #63C56B; // deeper green, sits inside green strings
+$properyName: #B6DDFD;
+$preprocessor: #E06C75;
+$constant: #66C3CC;
+$escapeChar: #D688D4;
+$metadata: #E5C07B;
+$jsonKey: #6395C5; // keyword blue, matches YAML keys (entity.name.tag)
+
+$searchResult: #42557B;

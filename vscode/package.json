@@ -1,0 +1,37 @@
+{
+  "name": "nordlys",
+  "displayName": "Nordlys",
+  "description": "Aurora over polar ocean night. A dark, low-contrast theme with aurora-green literals, quiet methods, full semantic token coverage and workbench surfaces derived from VS Code's Default Dark 2026.",
+  "keywords": [
+    "theme",
+    "dark",
+    "low-contrast",
+    "aurora",
+    "nordlys",
+    "relaxed"
+  ],
+  "version": "0.0.1",
+  "publisher": "feafarot",
+  "repository": {
+    "url": "https://github.com/feafarot/Nordlys"
+  },
+  "author": {
+    "name": "Roman Konkin",
+    "url": "https://github.com/feafarot"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Nordlys",
+        "uiTheme": "vs-dark",
+        "path": "./themes/Nordlys-color-theme.json"
+      }
+    ]
+  }
+}
